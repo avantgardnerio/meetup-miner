@@ -1,11 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="MeetupMiner">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Hello World</h1>
+    <base href="/" />
 
+    <meta charset="UTF-8">
+    <title>Meetup Miner</title>
+
+    <link href="css/main.css" rel="stylesheet" media="screen" />
+    <link href="css/normalize.css" rel="stylesheet" media="screen" />
+    <link href="css/skeleton.css" rel="stylesheet" media="screen" />
+</head>
+<body ng-controller="MainController" class="ng-cloak">
+
+<p>
+    {{view.message}}
+</p>
+
+<!-- scripts -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.10/angular.min.js" type="text/javascript"></script>
+<script src="js/app.js" type="text/javascript"></script>
+<script src="js/controllers.js" type="text/javascript"></script>
+<script src="js/services.js" type="text/javascript"></script>
+<script src="js/filters.js" type="text/javascript"></script>
 </body>
 </html>
