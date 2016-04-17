@@ -15,18 +15,18 @@ app.controller('MainController', ['$scope', '$http', function ($scope, $http) {
     };
 
     $scope.zipCodeSubmit = function () {
-        const categoryId = $scope.view.categories
+        const categoryIds = $scope.view.categories
             .filter((cat) => cat.selected)
-            .map((cat) => cat.id)[0];
-        const url = "/groups"
-                + "?key=" + $scope.view.apiKey
-                + "&zip=" + $scope.view.zip
-                + "&radius=" + $scope.view.radius
-                + "&category_id=" + categoryId
-            ;
-        $http.get(url)
+            .map((cat) => cat.id);
+        const data = {
+            "key": $scope.view.apiKey,
+            "zip": $scope.view.zip,
+            "radius": $scope.view.radius,
+            "categoryIds": categoryIds
+        };
+        $http.post("/groups", data)
             .then((data) =>
-                $scope.view.groups = data.data.results
+                $scope.view.groups = data.data
             );
     };
 }]);

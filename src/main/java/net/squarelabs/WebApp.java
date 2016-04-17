@@ -1,8 +1,20 @@
 package net.squarelabs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.*;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
+import net.squarelabs.model.Group;
+import net.squarelabs.model.GroupResponse;
 import org.apache.commons.io.IOUtils;
+import spark.Spark;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
@@ -13,6 +25,28 @@ public class WebApp {
   private static final String GET_GROUPS = BASE_URL + "2/groups";
 
   public static void main(String[] args) {
+
+    Unirest.setObjectMapper(new ObjectMapper() {
+      private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
+          = new com.fasterxml.jackson.databind.ObjectMapper();
+
+      public <T> T readValue(String value, Class<T> valueType) {
+        try {
+          return jacksonObjectMapper.readValue(value, valueType);
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      public String writeValue(Object value) {
+        try {
+          return jacksonObjectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    });
+
     staticFileLocation("/public"); // Static files
 
     get("/categories", (req, res) -> {
@@ -21,15 +55,29 @@ public class WebApp {
       return IOUtils.toString(new URL(GET_CATEGORIES + "?key=" + key));
     });
 
-    get("/groups", (req, res) -> {
-      String url = String.format("%s?key=%s&category_id=%s&zip=%s&radius=%s",
-          GET_GROUPS,
-          req.queryParams("key"),
-          req.queryParams("category_id"),
-          req.queryParams("zip"),
-          req.queryParams("radius")
-      );
-      return IOUtils.toString(new URL(url));
+    Spark.post("/groups", (req, res) -> {
+      res.type("application/json");
+      List<Group> groups = new ArrayList<>();
+      JsonObject data = (JsonObject) new JsonParser().parse(req.body());
+      JsonArray categoryIds = data.getAsJsonArray("categoryIds");
+      for (JsonElement categoryId : categoryIds) {
+        long total = Integer.MAX_VALUE;
+        while(groups.size() < total) {
+          int offset = (int)Math.ceil(groups.size() / 200);
+          GroupResponse resp = Unirest.get(GET_GROUPS)
+              .queryString("offset", offset)
+              .queryString("key", data.getAsJsonPrimitive("key").getAsString())
+              .queryString("zip", data.getAsJsonPrimitive("zip").getAsString())
+              .queryString("radius", data.getAsJsonPrimitive("radius").getAsString())
+              .queryString("category_id", categoryId.getAsString())
+              .asObject(GroupResponse.class)
+              .getBody();
+          groups.addAll(resp.getResults());
+          total = resp.getMeta().getTotalCount();
+        }
+      }
+      String json = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(groups);
+      return json;
     });
 
     System.out.println("Web app started! Please browse to http://localhost:4567/");
