@@ -13,9 +13,6 @@
 <body ng-controller="MainController" class="ng-cloak">
 
 <div class="container">
-    <p>
-        {{view.message}}
-    </p>
     <form name="frmApiKey" ng-submit="apiKeySubmit()">
         <div class="row">
             <div class="six column">
@@ -27,7 +24,29 @@
     </form>
     <div class="row categories">
         <ul>
-            <li ng-repeat="category in view.categories">{{category.name}}</li>
+            <li ng-repeat="category in view.categories">
+                <input type="checkbox" ng-model="category.selected" /> {{category.name}}
+            </li>
+        </ul>
+    </div>
+    <form name="frmZipCode" ng-submit="zipCodeSubmit()">
+        <div class="row">
+            <div class="six column">
+                <label for="tbZip">Enter your zip code:</label>
+                <input id="tbZip" class="u-full-width" type="text" ng-model="view.zip" />
+            </div>
+            <div class="six column">
+                <label for="tbRadius">Radius:</label>
+                <input id="tbRadius" class="u-full-width" type="text" ng-model="view.radius" />
+            </div>
+        </div>
+        <input class="button-primary" type="submit" value="Find Groups" />
+    </form>
+    <div class="row groups">
+        <ul>
+            <li ng-repeat="group in view.groups">
+                <input type="checkbox" ng-model="group.selected" /> {{group.name}}
+            </li>
         </ul>
     </div>
 </div>
