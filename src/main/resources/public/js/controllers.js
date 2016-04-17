@@ -29,4 +29,18 @@ app.controller('MainController', ['$scope', '$http', function ($scope, $http) {
                 $scope.view.groups = data.data
             );
     };
+
+    $scope.groupSubmit = function () {
+        const groupIds = $scope.view.groups
+            .filter((grp) => grp.selected)
+            .map((grp) => grp.id);
+        const data = {
+            "key": $scope.view.apiKey,
+            "groupIds": groupIds
+        };
+        $http.post("/members", data)
+            .then((data) =>
+                $scope.view.members = data.data
+            );
+    };
 }]);

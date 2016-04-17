@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="MeetupMiner">
 <head>
-    <base href="/" />
+    <base href="/"/>
 
     <meta charset="UTF-8">
     <title>Meetup Miner</title>
 
-    <link href="css/main.css" rel="stylesheet" media="screen" />
-    <link href="css/normalize.css" rel="stylesheet" media="screen" />
-    <link href="css/skeleton.css" rel="stylesheet" media="screen" />
+    <link href="css/main.css" rel="stylesheet" media="screen"/>
+    <link href="css/normalize.css" rel="stylesheet" media="screen"/>
+    <link href="css/skeleton.css" rel="stylesheet" media="screen"/>
 </head>
 <body ng-controller="MainController" class="ng-cloak">
 
@@ -17,15 +17,15 @@
         <div class="row">
             <div class="six column">
                 <label for="tbApiKey">Your Meetup.com API Key:</label>
-                <input id="tbApiKey" class="u-full-width" type="text" ng-model="view.apiKey" />
+                <input id="tbApiKey" class="u-full-width" type="text" ng-model="view.apiKey"/>
             </div>
         </div>
-        <input class="button-primary" type="submit" value="Show Categories" />
+        <input class="button-primary" type="submit" value="Show Categories"/>
     </form>
     <div class="row categories">
         <ul>
             <li ng-repeat="category in view.categories">
-                <input type="checkbox" ng-model="category.selected" /> {{category.name}}
+                <input type="checkbox" ng-model="category.selected"/> {{category.name}}
             </li>
         </ul>
     </div>
@@ -33,22 +33,26 @@
         <div class="row">
             <div class="six column">
                 <label for="tbZip">Enter your zip code:</label>
-                <input id="tbZip" class="u-full-width" type="text" ng-model="view.zip" />
+                <input id="tbZip" class="u-full-width" type="text" ng-model="view.zip"/>
             </div>
             <div class="six column">
                 <label for="tbRadius">Radius:</label>
-                <input id="tbRadius" class="u-full-width" type="text" ng-model="view.radius" />
+                <input id="tbRadius" class="u-full-width" type="text" ng-model="view.radius"/>
             </div>
         </div>
-        <input class="button-primary" type="submit" value="Find Groups" />
+        <input class="button-primary" type="submit" value="Find Groups"/>
     </form>
     <div class="row groups">
         <ul>
             <li ng-repeat="group in view.groups">
-                <input type="checkbox" ng-model="group.selected" /> {{group.name}}
+                <input type="checkbox" ng-model="group.selected"/>
+                <a href="{{group.link}}" target="_blank">{{group.name}}</a>
             </li>
         </ul>
     </div>
+    <form name="frmGroup" ng-submit="groupSubmit()">
+        <input class="button-primary" type="submit" value="Find Members"/>
+    </form>
 </div>
 
 <!-- scripts -->
