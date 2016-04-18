@@ -13,7 +13,9 @@ import net.squarelabs.model.Member;
 import org.apache.commons.io.IOUtils;
 import spark.Spark;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ public class WebApp {
   private static final String GET_CATEGORIES = BASE_URL + "2/categories";
   private static final String GET_GROUPS = BASE_URL + "2/groups";
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
     // Super nasty Unirest initialization
     Unirest.setObjectMapper(new ObjectMapper() {
@@ -98,6 +100,11 @@ public class WebApp {
       return "fixme!";
     });
 
-    System.out.println("Web app started! Please browse to http://localhost:4567/");
+    String url = "http://localhost:4567/";
+    if(Desktop.isDesktopSupported()) {
+      Desktop.getDesktop().browse(URI.create(url));
+    } else {
+      System.out.println("Web app started! Please browse to " + url);
+    }
   }
 }
