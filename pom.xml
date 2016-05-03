@@ -32,6 +32,11 @@
             <version>1.2.0</version>
         </dependency>
         <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20090211</version>
@@ -62,6 +67,25 @@
                 <configuration>
                     <source>${project.build.sourceVersion}</source>
                     <target>${project.build.targetVersion}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>net.squarelabs.FindCompanies</mainClass>
+                    <arguments>
+                        <argument>target/edtech2.graphml</argument>
+                        <argument>target/edtech3.graphml</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

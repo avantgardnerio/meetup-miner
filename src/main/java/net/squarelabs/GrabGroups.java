@@ -21,18 +21,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class App {
+public class GrabGroups {
     public static final String meetupHost = "http://api.meetup.com";
     public static String meetupKey;
     // Get groups
     //String groupsPath = "/2/groups?key=" + meetupKey + "&category_id=34&zip=80202&radius=50";
-    public static final int[] groups = {163708, 223561, 314479, 1220063, 1422724, 1425503, 1491015, 1516743, 1535331, 1547640, 1548991, 1624468, 1657344,
-            1661337, 1672600, 1674002, 1678404, 1696476, 1705510, 1714328, 1725924, 1728598, 1759946, 1769691, 1779796, 1788222, 1795116,
-            1812077, 1813752, 1815835, 1817878, 2455392, 2636792, 2638312, 2782962, 3020082, 3027382, 3037962, 3140592, 3155392, 3165832,
-            3271892, 3434322, 3466642, 3965112, 4006342, 4097442, 4175302, 4286122, 4339692, 4501642, 5249432, 5361852, 5463922, 5748062,
-            5799632, 5883592, 6134942, 6285882, 6402972, 6576002, 6658252, 6904452, 7027362, 7193722, 7305192, 7349682, 7402532, 7468782,
-            7553982, 7625212, 7787102, 7820832, 7958962, 7994132, 8311872, 8356622, 8430232, 8506532, 8998462, 9032912, 9226222, 9259062,
-            9429182, 9677392, 9737702, 10230622, 10232252, 10271262, 10288712, 10330622, 10433952, 10512292, 10550012, 10715282, 10768892};
+    public static final int[] groups = {18262332, 19134792, 163708, 314479, 1705510};
     private static Pattern memberPat = Pattern.compile("http://www\\.meetup\\.com/members/(\\d*)");
     private static HashMap<Integer, Vertex> map = new HashMap<>();
     private static TitanGraph graph;
