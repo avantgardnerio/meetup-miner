@@ -71,25 +71,6 @@
                     <target>${project.build.targetVersion}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.4.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>net.squarelabs.FindCompanies</mainClass>
-                    <arguments>
-                        <argument>target/edtech2.graphml</argument>
-                        <argument>target/edtech3.graphml</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
