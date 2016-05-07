@@ -7,6 +7,7 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,16 +42,13 @@ public class FindCompanies {
           .header("Upgrade-Insecure-Requests", "1")
           .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)").get();
       Elements elements = doc.select("#ires .g .slp");
-      if(elements.size() == 0) {
+      if (elements.size() == 0) {
         System.out.println("Elements not found!");
         continue;
       }
       for (Element el : elements) {
         VertexProperty<?> prop = vert.property("tagline");
-        if(prop == null || prop.value() == null)
-          continue;
-        String tagline = prop.value().toString();
-        if (!StringUtils.isEmpty(tagline))
+        if (!(prop instanceof EmptyVertexProperty) && prop != null && prop.value() != null && !StringUtils.isEmpty(prop.value().toString()))
           continue;
         String text = el.text();
         if (!text.contains("Denver") && !text.contains("Boulder")) {
