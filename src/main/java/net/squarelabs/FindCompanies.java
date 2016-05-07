@@ -6,6 +6,7 @@ import com.thinkaurelius.titan.core.TitanVertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -45,7 +46,10 @@ public class FindCompanies {
         continue;
       }
       for (Element el : elements) {
-        String tagline = vert.property("tagline").value().toString();
+        VertexProperty<?> prop = vert.property("tagline");
+        if(prop.value() == null)
+          continue;
+        String tagline = prop.value().toString();
         if (!StringUtils.isEmpty(tagline))
           continue;
         String text = el.text();
