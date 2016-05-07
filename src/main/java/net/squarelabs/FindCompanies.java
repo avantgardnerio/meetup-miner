@@ -8,6 +8,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
+import org.codehaus.jettison.json.JSONArray;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,7 +42,7 @@ public class FindCompanies {
       }
       String name = URLEncoder.encode(vert.property("name").value().toString());
       System.out.println(name);
-      String url = "https://www.google.com/search?safe=off&q=" + name + "+Denver+site:linkedin.com&cad=h";
+      String url = "https://www.google.com/search?safe=off&q=" + name + "+Denver+site:linkedin.com&cad=h&num=100";
       Thread.sleep(sleepTime);
       Document doc = Jsoup.connect(url)
           .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
@@ -52,7 +53,7 @@ public class FindCompanies {
         System.out.println("Elements not found!");
         continue;
       }
-      String tagline = "Not found";
+      JSONArray tagLines = new JSONArray();
       for (Element el : elements) {
         String text = el.text();
         if (!text.contains("Denver") && !text.contains("Boulder")) {
@@ -60,9 +61,9 @@ public class FindCompanies {
           continue;
         }
         System.out.println("tagline: " + text);
-        tagline = text;
+        tagLines.put(text);
       }
-      vert.property("tagline", tagline);
+      vert.property("tagline", tagLines.toString());
 
       graph.tx().commit();
       System.out.println("Saved!");
