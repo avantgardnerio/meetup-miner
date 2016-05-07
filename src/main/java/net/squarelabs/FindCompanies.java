@@ -17,6 +17,8 @@ public class FindCompanies {
   private static TitanGraph graph;
 
   public static void main(String[] args) throws Exception {
+    long sleepTime = Long.parseLong(args[0]);
+
     Configuration conf = new BaseConfiguration();
     conf.setProperty("storage.backend", "cassandra");
     conf.setProperty("storage.hostname", System.getProperty("storage.hostname"));
@@ -51,8 +53,9 @@ public class FindCompanies {
         vert.property("tagline", text);
       }
 
+      graph.tx().commit();
       System.out.println("Saved!");
-      Thread.sleep(4 * 60 * 1000);
+      Thread.sleep(sleepTime);
     }
 
   }
