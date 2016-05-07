@@ -41,7 +41,7 @@ public class FindCompanies {
       }
       String name = URLEncoder.encode(vert.property("name").value().toString());
       System.out.println(name);
-      String url = "https://www.google.com/search?safe=off&q=" + name + "+site:linkedin.com&cad=h";
+      String url = "https://www.google.com/search?safe=off&q=" + name + "+Denver+site:linkedin.com&cad=h";
       Thread.sleep(sleepTime);
       Document doc = Jsoup.connect(url)
           .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
