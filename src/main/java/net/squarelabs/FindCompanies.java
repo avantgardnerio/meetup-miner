@@ -50,10 +50,11 @@ public class FindCompanies {
           continue;
         String text = el.text();
         if (!text.contains("Denver") && !text.contains("Boulder")) {
+          System.out.println("Skipping tagline: " + text);
           vert.property("tagline", "Not found");
           continue;
         }
-        System.out.println(text);
+        System.out.println("tagline: " + text);
         vert.property("tagline", text);
       }
 
