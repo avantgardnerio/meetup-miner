@@ -41,8 +41,11 @@ public class GrabGroups {
     }
 
     // Write
+    System.out.println("Done writing groups!");
     graph.tx().commit();
+    System.out.println("Transaction complete!");
     graph.close();
+    System.out.println("Done!");
   }
 
   private static void addGroup(int groupId) throws Exception {
