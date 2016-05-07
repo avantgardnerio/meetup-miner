@@ -98,7 +98,7 @@ public class GrabGroups {
         else if(clazz == Integer.class)
           vertex.property(key, val);
         else if(clazz == Long.class)
-          vertex.property(key, val);
+          vertex.property(key, val.toString());
         else if(clazz == Double.class)
           vertex.property(key, val);
         else if(clazz == JSONArray.class)
