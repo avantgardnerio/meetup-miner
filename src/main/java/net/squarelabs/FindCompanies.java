@@ -47,7 +47,7 @@ public class FindCompanies {
       }
       for (Element el : elements) {
         VertexProperty<?> prop = vert.property("tagline");
-        if(prop.value() == null)
+        if(prop == null || prop.value() == null)
           continue;
         String tagline = prop.value().toString();
         if (!StringUtils.isEmpty(tagline))
