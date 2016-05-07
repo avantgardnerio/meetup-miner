@@ -13,13 +13,15 @@
         <project.build.targetVersion>1.8</project.build.targetVersion>
 
         <compiler.version>3.2</compiler.version>
+
+        <titan.version>1.0.0</titan.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
-            <artifactId>titan-core</artifactId>
-            <version>0.4.4</version>
+            <artifactId>titan-all</artifactId>
+            <version>${titan.version}</version>
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>

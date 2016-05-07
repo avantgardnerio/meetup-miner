@@ -2,11 +2,7 @@ package net.squarelabs;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.io.graphml.GraphMLReader;
-import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
+import com.thinkaurelius.titan.core.TitanVertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
@@ -15,31 +11,26 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.net.URLEncoder;
 
 public class FindCompanies {
   private static TitanGraph graph;
 
   public static void main(String[] args) throws Exception {
-    String inPath = args[0];
-    String outPath = args[1];
-
     Configuration conf = new BaseConfiguration();
-    conf.setProperty("storage.backend", "inmemory");
+    conf.setProperty("storage.backend", "cassandra");
+    conf.setProperty("storage.hostname", System.getProperty("storage.hostname"));
     graph = TitanFactory.open(conf);
 
-    try (FileInputStream in = new FileInputStream(new File(inPath))) {
-      GraphMLReader.inputGraph(graph, in);
-    }
-
-    for (Vertex vert : graph.query().vertices()) {
-      String type = vert.getProperty("type");
-      if(!"member".equals(type))
+    Iterable<TitanVertex> vertices = graph.query().vertices();
+    System.out.println("Got vertices!");
+    int i = 0;
+    for (TitanVertex vert : vertices) {
+      System.out.println("Vertex " + i++);
+      String type = vert.property("type").toString();
+      if (!"member".equals(type))
         continue;
-      String name = URLEncoder.encode(vert.getProperty("name"));
+      String name = URLEncoder.encode(vert.property("name").toString());
       System.out.println(name);
       String url = "https://www.google.com/search?safe=off&q=" + name + "+site:linkedin.com&cad=h";
       Document doc = Jsoup.connect(url)
@@ -47,22 +38,19 @@ public class FindCompanies {
           .header("Upgrade-Insecure-Requests", "1")
           .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)").get();
       Elements elements = doc.select("#ires .g .slp");
-      for(Element el : elements) {
-        String tagline = vert.getProperty("tagline");
-        if(!StringUtils.isEmpty(tagline))
+      for (Element el : elements) {
+        String tagline = vert.property("tagline").toString();
+        if (!StringUtils.isEmpty(tagline))
           continue;
         String text = el.text();
-        if(!text.contains("Denver") && !text.contains("Boulder")) {
-          vert.setProperty("tagline", "Not found");
+        if (!text.contains("Denver") && !text.contains("Boulder")) {
+          vert.property("tagline", "Not found");
           continue;
         }
         System.out.println(text);
-        vert.setProperty("tagline", text);
+        vert.property("tagline", text);
       }
 
-      try (FileOutputStream out = new FileOutputStream(new File(outPath))) {
-        GraphMLWriter.outputGraph(graph, out);
-      }
       System.out.println("Saved!");
       Thread.sleep(4 * 60 * 1000);
     }
