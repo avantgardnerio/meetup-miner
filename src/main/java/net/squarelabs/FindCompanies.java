@@ -28,11 +28,11 @@ public class FindCompanies {
     System.out.println("Got vertices!");
     int i = 0;
     for (TitanVertex vert : vertices) {
-      String type = vert.property("type").toString();
+      String type = vert.property("type").value().toString();
       System.out.println("Vertex " + i++ + " type=" + type);
       if (!"member".equals(type))
         continue;
-      String name = URLEncoder.encode(vert.property("name").toString());
+      String name = URLEncoder.encode(vert.property("name").value().toString());
       System.out.println(name);
       String url = "https://www.google.com/search?safe=off&q=" + name + "+site:linkedin.com&cad=h";
       Document doc = Jsoup.connect(url)
@@ -45,7 +45,7 @@ public class FindCompanies {
         continue;
       }
       for (Element el : elements) {
-        String tagline = vert.property("tagline").toString();
+        String tagline = vert.property("tagline").value().toString();
         if (!StringUtils.isEmpty(tagline))
           continue;
         String text = el.text();
