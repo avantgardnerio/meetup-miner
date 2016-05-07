@@ -41,6 +41,7 @@ public class GrabGroups {
     }
 
     // Write
+    graph.tx().commit();
     graph.close();
   }
 
