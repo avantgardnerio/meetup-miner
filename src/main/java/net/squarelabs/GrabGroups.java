@@ -77,6 +77,7 @@ public class GrabGroups {
     // Add group edge
     TitanEdge edge = memberVert.addEdge("member", groupVert);
     edge.property("relation", "member");
+    graph.tx().commit();
   }
 
   private static TitanVertex addVertex(JSONObject jso, String type) {
@@ -106,6 +107,7 @@ public class GrabGroups {
         else
           throw new RuntimeException("Unknown type: " + clazz);
       }
+      graph.tx().commit();
       return vertex;
     } catch (Exception ex) {
       throw new RuntimeException(ex);
