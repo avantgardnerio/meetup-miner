@@ -56,7 +56,11 @@ public class FindCompanies {
       JSONArray tagLines = new JSONArray();
       for (Element el : elements) {
         String text = el.text();
-        if (!text.contains("Denver") && !text.contains("Boulder")) {
+        if (!text.contains("Denver")
+            && !text.contains("Boulder")
+            && !text.contains("Golden")
+            && !text.contains("Colorado")
+            ) {
           System.out.println("Skipping tagline: " + text);
           continue;
         }
