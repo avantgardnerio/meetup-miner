@@ -28,8 +28,8 @@ public class FindCompanies {
     System.out.println("Got vertices!");
     int i = 0;
     for (TitanVertex vert : vertices) {
-      System.out.println("Vertex " + i++);
       String type = vert.property("type").toString();
+      System.out.println("Vertex " + i++ + " type=" + type);
       if (!"member".equals(type))
         continue;
       String name = URLEncoder.encode(vert.property("name").toString());
