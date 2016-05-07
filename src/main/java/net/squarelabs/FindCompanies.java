@@ -34,6 +34,11 @@ public class FindCompanies {
       System.out.println("Vertex " + i++ + " type=" + type);
       if (!"member".equals(type))
         continue;
+      VertexProperty<?> prop = vert.property("tagline");
+      if (!(prop instanceof EmptyVertexProperty) && prop != null && prop.value() != null && !StringUtils.isEmpty(prop.value().toString())) {
+        System.out.println("Skipping member with tagline: " + prop.value().toString());
+        //continue;
+      }
       String name = URLEncoder.encode(vert.property("name").value().toString());
       System.out.println(name);
       String url = "https://www.google.com/search?safe=off&q=" + name + "+site:linkedin.com&cad=h";
@@ -46,19 +51,17 @@ public class FindCompanies {
         System.out.println("Elements not found!");
         continue;
       }
+      String tagline = "Not found";
       for (Element el : elements) {
-        VertexProperty<?> prop = vert.property("tagline");
-        if (!(prop instanceof EmptyVertexProperty) && prop != null && prop.value() != null && !StringUtils.isEmpty(prop.value().toString()))
-          continue;
         String text = el.text();
         if (!text.contains("Denver") && !text.contains("Boulder")) {
           System.out.println("Skipping tagline: " + text);
-          vert.property("tagline", "Not found");
           continue;
         }
         System.out.println("tagline: " + text);
-        vert.property("tagline", text);
+        tagline = text;
       }
+      vert.property("tagline", tagline);
 
       graph.tx().commit();
       System.out.println("Saved!");
