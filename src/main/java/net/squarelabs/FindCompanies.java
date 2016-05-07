@@ -40,6 +40,10 @@ public class FindCompanies {
           .header("Upgrade-Insecure-Requests", "1")
           .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)").get();
       Elements elements = doc.select("#ires .g .slp");
+      if(elements.size() == 0) {
+        System.out.println("Elements not found!");
+        continue;
+      }
       for (Element el : elements) {
         String tagline = vert.property("tagline").toString();
         if (!StringUtils.isEmpty(tagline))
