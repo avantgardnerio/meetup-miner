@@ -42,7 +42,7 @@ public class FindCompanies {
       }
       String name = URLEncoder.encode(vert.property("name").value().toString());
       System.out.println(name);
-      String url = "https://www.google.com/search?safe=off&q=" + name + "+Denver+site:linkedin.com&cad=h&num=100";
+      String url = "https://www.google.com/search?safe=off&q=" + name + "+Denver+site:linkedin.com&cad=h";
       Thread.sleep(sleepTime);
       Document doc = Jsoup.connect(url)
           .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
@@ -53,25 +53,40 @@ public class FindCompanies {
         System.out.println("Elements not found!");
         continue;
       }
-      JSONArray tagLines = new JSONArray();
-      for (Element el : elements) {
-        String text = el.text();
-        if (!text.contains("Denver")
-            && !text.contains("Boulder")
-            && !text.contains("Golden")
-            && !text.contains("Colorado")
-            ) {
-          System.out.println("Skipping tagline: " + text);
-          continue;
-        }
-        System.out.println("tagline: " + text);
-        tagLines.put(text);
+      Element el = findPerson(elements);
+      if(el == null) {
+        System.out.println("Person not found!");
+        continue;
       }
-      vert.property("tagline", tagLines.toString());
-
+      String tagLine = el.text();
+      String href = el.parent().parent().select(".r a").attr("href");
+      String title = el.parent().parent().select(".r a").text();
+      System.out.println("tagLine=" + tagLine);
+      System.out.println("href=" + href);
+      System.out.println("title=" + title);
+      vert.property("tagline", tagLine);
+      vert.property("href", href);
+      vert.property("title", title);
       graph.tx().commit();
       System.out.println("Saved!");
     }
 
   }
+
+  private static Element findPerson(Elements elements) {
+    for (Element el : elements) {
+      String text = el.text();
+      if (!text.contains("Denver")
+          && !text.contains("Boulder")
+          && !text.contains("Golden")
+          && !text.contains("Colorado")
+          ) {
+        System.out.println("Skipping tagline: " + text);
+        continue;
+      }
+      return el;
+    }
+    return null;
+  }
+
 }
