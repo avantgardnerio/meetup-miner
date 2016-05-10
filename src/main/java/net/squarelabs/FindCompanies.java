@@ -38,7 +38,7 @@ public class FindCompanies {
       VertexProperty<?> prop = vert.property("tagline");
       if (!(prop instanceof EmptyVertexProperty) && prop != null && prop.value() != null && !StringUtils.isEmpty(prop.value().toString())) {
         System.out.println("Skipping member with tagline: " + prop.value().toString());
-        //continue;
+        continue;
       }
       String name = URLEncoder.encode(vert.property("name").value().toString());
       System.out.println(name);
