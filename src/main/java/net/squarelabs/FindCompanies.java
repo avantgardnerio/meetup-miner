@@ -55,6 +55,8 @@ public class FindCompanies {
       Element el = findPerson(elements);
       if (el == null) {
         System.out.println("Person not found!");
+        vert.property("tagline", "Not Found");
+        graph.tx().commit();
         continue;
       }
       String tagLine = el.text();
