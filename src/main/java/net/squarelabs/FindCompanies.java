@@ -8,7 +8,6 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
-import org.codehaus.jettison.json.JSONArray;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -54,7 +53,7 @@ public class FindCompanies {
         continue;
       }
       Element el = findPerson(elements);
-      if(el == null) {
+      if (el == null) {
         System.out.println("Person not found!");
         continue;
       }
