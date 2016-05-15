@@ -1,9 +1,11 @@
 package net.squarelabs;
 
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import com.google.common.collect.Iterables;
+import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.schema.PropertyKeyMaker;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import com.thinkaurelius.titan.core.util.TitanCleanup;
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.configuration.BaseConfiguration;
@@ -37,6 +39,19 @@ public class GrabGroups {
     conf.setProperty("storage.backend", "cassandra");
     conf.setProperty("storage.hostname", System.getProperty("storage.hostname"));
     graph = TitanFactory.open(conf);
+
+//    graph.shutdown();
+//    TitanCleanup.clear(graph);
+
+//    TitanManagement mgmt = graph.getManagementSystem();
+//    PropertyKey groupKey = mgmt.makePropertyKey("groupId").dataType(Long.class).make();
+//    mgmt.buildIndex("byGroupId",Vertex.class).addKey(groupKey).buildCompositeIndex();
+//    mgmt.commit();
+
+//    TitanManagement mgmt = graph.getManagementSystem();
+//    PropertyKey memberKey = mgmt.makePropertyKey("memberId").dataType(Long.class).make();
+//    mgmt.buildIndex("byMemberId",Vertex.class).addKey(memberKey).buildCompositeIndex();
+//    mgmt.commit();
 
     for (int groupId : groups) {
       addGroup(groupId);
@@ -78,9 +93,18 @@ public class GrabGroups {
   private static void addMember(Vertex groupVert, JSONObject memberObj) throws Exception {
     // Add vertex
     Vertex memberVert = addVertex(memberObj, "member");
-    System.out.println("member=" + memberVert.getProperty("meetupId"));
+    System.out.println("member=" + memberVert.getProperty("memberId"));
 
     // Add group edge
+    for(Edge e : memberVert.getEdges(Direction.OUT)) {
+      Vertex group = e.getVertex(Direction.IN);
+      long otherId = groupVert.getProperty("groupId");
+      long thisId = group.getProperty("groupId");
+      if(thisId == otherId) {
+        return;
+      }
+    }
+
     Edge edge = memberVert.addEdge("member", groupVert);
     edge.setProperty("relation", "member");
     graph.commit();
@@ -88,15 +112,20 @@ public class GrabGroups {
 
   private static Vertex addVertex(JSONObject jso, String type) {
     try {
-      int id = (int) jso.get("id");
-      Vertex vertex = graph.addVertex("" + id);
-      vertex.setProperty("type", type);
+      String keyName = type + "Id";
+      long id = jso.getLong("id");
+      Vertex vertex = Iterables.getFirst(graph.getVertices(keyName, id), null);
+      if(vertex == null) {
+        vertex = graph.addVertex();
+        vertex.setProperty("type", type);
+        vertex.setProperty(keyName, id);
+      }
       Iterator<?> keys = jso.keys();
       while (keys.hasNext()) {
         String key = (String) keys.next();
         Object val = jso.get(key);
         if ("id".equals(key))
-          key = "meetupId";
+          continue;
         Class<?> clazz = val.getClass();
         if(clazz == String.class)
           vertex.setProperty(key, val);
