@@ -4,6 +4,8 @@ import com.thinkaurelius.titan.core.TitanEdge;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.codehaus.jettison.json.JSONArray;
@@ -42,9 +44,9 @@ public class GrabGroups {
 
     // Write
     System.out.println("Done writing groups!");
-    graph.tx().commit();
+    graph.commit();
     System.out.println("Transaction complete!");
-    graph.close();
+    graph.shutdown();
     System.out.println("Done!");
   }
 
@@ -52,7 +54,7 @@ public class GrabGroups {
     System.out.println("group=" + groupId);
     String groupPath = "/2/groups?key=" + meetupKey + "&group_id=" + groupId;
     JSONObject groupObj = (JSONObject) ((JSONArray) req(meetupHost + groupPath).get("results")).get(0);
-    TitanVertex groupVert = addVertex(groupObj, "group");
+    Vertex groupVert = addVertex(groupObj, "group");
 
     // members
     Integer count = null;
@@ -73,22 +75,22 @@ public class GrabGroups {
     }
   }
 
-  private static void addMember(TitanVertex groupVert, JSONObject memberObj) throws Exception {
+  private static void addMember(Vertex groupVert, JSONObject memberObj) throws Exception {
     // Add vertex
-    TitanVertex memberVert = addVertex(memberObj, "member");
-    System.out.println("member=" + memberVert.property("meetupId"));
+    Vertex memberVert = addVertex(memberObj, "member");
+    System.out.println("member=" + memberVert.getProperty("meetupId"));
 
     // Add group edge
-    TitanEdge edge = memberVert.addEdge("member", groupVert);
-    edge.property("relation", "member");
-    graph.tx().commit();
+    Edge edge = memberVert.addEdge("member", groupVert);
+    edge.setProperty("relation", "member");
+    graph.commit();
   }
 
-  private static TitanVertex addVertex(JSONObject jso, String type) {
+  private static Vertex addVertex(JSONObject jso, String type) {
     try {
       int id = (int) jso.get("id");
-      TitanVertex vertex = graph.addVertex("" + id);
-      vertex.property("type", type);
+      Vertex vertex = graph.addVertex("" + id);
+      vertex.setProperty("type", type);
       Iterator<?> keys = jso.keys();
       while (keys.hasNext()) {
         String key = (String) keys.next();
@@ -97,21 +99,21 @@ public class GrabGroups {
           key = "meetupId";
         Class<?> clazz = val.getClass();
         if(clazz == String.class)
-          vertex.property(key, val);
+          vertex.setProperty(key, val);
         else if(clazz == Integer.class)
-          vertex.property(key, val);
+          vertex.setProperty(key, val);
         else if(clazz == Long.class)
-          vertex.property(key, val.toString());
+          vertex.setProperty(key, val.toString());
         else if(clazz == Double.class)
-          vertex.property(key, val);
+          vertex.setProperty(key, val);
         else if(clazz == JSONArray.class)
-          vertex.property(key, val.toString());
+          vertex.setProperty(key, val.toString());
         else if(clazz == JSONObject.class)
-          vertex.property(key, val.toString());
+          vertex.setProperty(key, val.toString());
         else
           throw new RuntimeException("Unknown type: " + clazz);
       }
-      graph.tx().commit();
+      graph.commit();
       return vertex;
     } catch (Exception ex) {
       throw new RuntimeException(ex);

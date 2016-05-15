@@ -14,7 +14,7 @@
 
         <compiler.version>3.2</compiler.version>
 
-        <titan.version>1.0.0</titan.version>
+        <titan.version>0.5.4</titan.version>
     </properties>
 
     <dependencies>
@@ -26,6 +26,11 @@
         <dependency>
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-all</artifactId>
+            <version>${titan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thinkaurelius.titan</groupId>
+            <artifactId>titan-rexster</artifactId>
             <version>${titan.version}</version>
         </dependency>
         <dependency>

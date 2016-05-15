@@ -2,9 +2,9 @@ package net.squarelabs;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
-import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,8 +17,7 @@ public class Export {
     TitanGraph graph = TitanFactory.open(conf);
 
     try (FileOutputStream out = new FileOutputStream(new File("companies.graphml"))) {
-      GraphMLWriter writer = GraphMLWriter.build().create();
-      writer.writeGraph(out, graph);
+      GraphMLWriter.outputGraph(graph, out);
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }

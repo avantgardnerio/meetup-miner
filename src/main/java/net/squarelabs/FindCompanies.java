@@ -2,12 +2,10 @@ package net.squarelabs;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
-import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,20 +24,20 @@ public class FindCompanies {
     conf.setProperty("storage.hostname", System.getProperty("storage.hostname"));
     graph = TitanFactory.open(conf);
 
-    Iterable<TitanVertex> vertices = graph.query().vertices();
+    Iterable<Vertex> vertices = graph.query().vertices();
     System.out.println("Got vertices!");
     int i = 0;
-    for (TitanVertex vert : vertices) {
-      String type = vert.property("type").value().toString();
+    for (Vertex vert : vertices) {
+      String type = vert.getProperty("type");
       System.out.println("Vertex " + i++ + " type=" + type);
       if (!"member".equals(type))
         continue;
-      VertexProperty<?> prop = vert.property("tagline");
-      if (!(prop instanceof EmptyVertexProperty) && prop != null && prop.value() != null && !StringUtils.isEmpty(prop.value().toString())) {
-        System.out.println("Skipping member with tagline: " + prop.value().toString());
+      String prop = vert.getProperty("tagline");
+      if (!StringUtils.isEmpty(prop)) {
+        System.out.println("Skipping member with tagline: " + prop.toString());
         continue;
       }
-      String name = URLEncoder.encode(vert.property("name").value().toString());
+      String name = URLEncoder.encode(vert.getProperty("name"));
       System.out.println(name);
       String url = "https://www.google.com/search?safe=off&q=" + name + "+Denver+site:linkedin.com&cad=h";
       Thread.sleep(sleepTime);
@@ -55,8 +53,8 @@ public class FindCompanies {
       Element el = findPerson(elements);
       if (el == null) {
         System.out.println("Person not found!");
-        vert.property("tagline", "Not Found");
-        graph.tx().commit();
+        vert.setProperty("tagline", "Not Found");
+        graph.commit();
         continue;
       }
       String tagLine = el.text();
@@ -65,10 +63,10 @@ public class FindCompanies {
       System.out.println("tagLine=" + tagLine);
       System.out.println("href=" + href);
       System.out.println("title=" + title);
-      vert.property("tagline", tagLine);
-      vert.property("href", href);
-      vert.property("title", title);
-      graph.tx().commit();
+      vert.setProperty("tagline", tagLine);
+      vert.setProperty("href", href);
+      vert.setProperty("title", title);
+      graph.commit();
       System.out.println("Saved!");
     }
 
