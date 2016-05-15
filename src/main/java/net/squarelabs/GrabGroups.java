@@ -27,7 +27,7 @@ public class GrabGroups {
   public static String meetupKey;
   // Get groups
   //String groupsPath = "/2/groups?key=" + meetupKey + "&category_id=34&zip=80202&radius=50";
-  public static final int[] groups = {18262332, 19134792, 163708, 314479, 1705510};
+  public static final int[] groups = {223561,1529320,1618822,1624468,1759946,1788222,2427652,2455392,2782962,2929362,3965112,4501642,10512292,13726942,15641122,16031372,18314696,18557714,18630238,18656743,18675194,18852131,18951452,18955190,18989112,19002635,19005004,19011800,19100805,19109782,19409545,19550231,19647707,19717856,19781530,19888176,19898976};
   private static Pattern memberPat = Pattern.compile("http://www\\.meetup\\.com/members/(\\d*)");
   private static TitanGraph graph;
 
